@@ -1,0 +1,6 @@
+IM LDA 4
+DI ADD 5
+DI STA 6
+HLT 2
+69
+69
