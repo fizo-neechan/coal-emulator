@@ -1,11 +1,13 @@
 #include <iostream>
-#include <iomanip>
+#include "Comp.h"
 
 int main(){
 
-    int i;
-    std::cin >> i;
-    
+    Comp c;
+    // std::cout << c.binaryToDecimal("0001") <<std::endl;
+    // std::cout << c.decimalToBinary(c.binaryToDecimal("0011")+1, 4) <<std::endl << "abcd";
+    c.run();
+
 
     return 0;
 }
