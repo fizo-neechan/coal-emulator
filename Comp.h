@@ -17,7 +17,7 @@ class Comp {
         std::string index;
 
         // flipflops
-        bool I, E, S, IEN, IED, FGI, FGO;
+        bool I=false, E, S, IEN, IED, FGI, FGO;
         bool i0,i1;
         
 
@@ -31,7 +31,7 @@ class Comp {
     
         Comp(){
 
-            IO io("/home/fizo/Documents/coal-emulator/console/sample.txt",
+            IO io("sample.txt",
                     "");
 
             this->AC = std::string(20, '0');
@@ -86,6 +86,8 @@ class Comp {
         }
 
         void t1(){
+            // if(this->i1 && !this->i0)
+            // {}
             this->IR = this->RAM[binaryToDecimal(this->AR)];
             this->PC = this->decimalToBinary(this->binaryToDecimal(this->PC) + 1, 12);
 
@@ -116,9 +118,7 @@ class Comp {
                 if(this->i0 == 0){
                     // 10 immediate
                     this->DR = std::string(20, '0');
-                    for(int i = this->AR.length() - 1; i >= 0; i++){
-                        this->DR[i] = this->AR[i];
-                    }
+                    this->DR = decimalToBinary(binaryToDecimal(this->AR),20);
                 } else {
                     // 11 indexed
                     this->AR = this->RAM[this->binaryToDecimal(this->AR)];
@@ -141,7 +141,7 @@ class Comp {
 
         void t5(){
             // bool x = this->i1 && this->i0;
-            if(!(this->i1 && this->i0)){
+            if(!(this->i1 && !this->i0)){
                 switch(this->D){
                     case 3:
                         this->RAM[binaryToDecimal(this->AR)] = this->AC;
@@ -444,12 +444,12 @@ class Comp {
             std::cout << std::endl;
             std::cout << "SC = " << this->SC << std::endl;
             std::cout << "IR = " << this->IR <<  std::endl;
-            std::cout << "AR = " << this->AR <<  std::endl;
-            std::cout << "PC = " << this->PC <<  std::endl;
-            std::cout << "AC = " << this->AC <<  std::endl;
-            std::cout << "DR = " << this->DR <<  std::endl;
-            std::cout << "OUT = " << this->OUT <<  std::endl;
-            std::cout << "index = " << this->index <<  std::endl;
+            std::cout << "AR = " << binaryToDecimal(this->AR) <<  std::endl;
+            std::cout << "PC = " << binaryToDecimal(this->PC) <<  std::endl;
+            std::cout << "AC = " << binaryToDecimal(this->AC) <<  std::endl;
+            std::cout << "DR = " << binaryToDecimal(this->DR) <<  std::endl;
+            std::cout << "OUT = " << binaryToDecimal(this->OUT) <<  std::endl;
+            std::cout << "index = " << binaryToDecimal(this->index) <<  std::endl;
 
             std::cout << "E = " << this->E <<  std::endl;
             std::cout << "S = " << this->S <<  std::endl;
@@ -473,9 +473,10 @@ class Comp {
 
         void run(){
             // hlt fe001
+            bool hlt = 0;
             int pc = 0;
-            while(this->RAM[pc] != "11111110000000000001"){
-
+            while(!(this->RAM[binaryToDecimal(this->PC)] == "11111110000000000001" && this->SC==0)){
+                
                 switch (this->SC){
                     case 0:
                         t0();

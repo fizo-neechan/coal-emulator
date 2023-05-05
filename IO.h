@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <string>
 #include <map>
 #include <bitset>
 
@@ -64,6 +65,7 @@ public:
     std::string decodeLine(std::string line){
         std::string instruction = "";
         std::string word = "";
+
         bool isNum = line[0]>='0' && line[0]<='9' ? 1:0;
         int last_space = 0;
         for(int i = 0; i < line.length(); i++){
