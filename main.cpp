@@ -20,7 +20,7 @@ int main()
     c.run((1 / clock));
     c.output(oFile);
 
- 
+    system("pause");
 
 
     return 0;
