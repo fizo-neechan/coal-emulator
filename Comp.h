@@ -3,6 +3,9 @@
 #include <bitset>
 #include "IO.h"
 #include "Register.h"
+#include <time.h>
+#include <unistd.h>
+
 
 class Comp {
     private:
@@ -30,10 +33,10 @@ class Comp {
 
     public:
     
-        Comp(){
+        Comp(string inputFile,string outputFile){
 
-            IO io("sample.txt",
-                    "");
+            IO io(inputFile,outputFile);
+                    
 
             this->AC = std::string(20, '0');
             this->IR = std::string(20, '0');
@@ -80,11 +83,10 @@ class Comp {
             return out;
         }
 
-        void output()
+        void output(string oFile)
         {
-            string r="";
-            string w="";
-            IO out(r,w);
+            
+            IO out("",oFile);
             out.output(this->RAM,2048);
         }
 
@@ -487,7 +489,7 @@ class Comp {
             return 0;
         }
 
-        void run(){
+        void run(float timeDelay){
             // hlt fe001
             bool hlt = 0;
             int pc = 0;
@@ -498,7 +500,7 @@ class Comp {
                 switch (this->SC){
                     case 0:
                         t0();
-                        // sleep('3000')
+                  
                         break;
                     case 1:
                         t1();
@@ -534,7 +536,8 @@ class Comp {
 
                 system("cls"); 
                 this->print();
-                system("pause");
+                // system("pause");
+                sleep(timeDelay);
             }
         }
         

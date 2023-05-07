@@ -103,12 +103,13 @@ public:
     void output(string *mem,unsigned int size)
     {
         ofstream Ofile;
-        Ofile.open("output.txt");
+        Ofile.open(writeFilepath);
 
         for(int i =0;i<size;i++)
         {
             Ofile<<mem[i]<<endl;
         }
+        Ofile.close();
     }
     void readToMemory(std::string *mem, unsigned int size)
     {
