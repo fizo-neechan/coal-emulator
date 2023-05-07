@@ -1,0 +1,5 @@
+IM LDA 3
+DEC
+SZA
+DI BUN 1
+HLT

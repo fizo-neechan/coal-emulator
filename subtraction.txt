@@ -1,0 +1,5 @@
+ID LDA 3
+IM SUB 9
+HLT 2
+4
+10

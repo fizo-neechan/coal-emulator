@@ -1,0 +1,5 @@
+ID LDA 3
+IM ADD 9
+HLT
+4
+10
