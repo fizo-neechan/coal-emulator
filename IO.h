@@ -5,6 +5,9 @@
 #include <string>
 #include <map>
 #include <bitset>
+#include <string>
+#include <sstream>
+using namespace std;
 
 class IO
 {
@@ -12,8 +15,10 @@ private:
     std::string readFilepath;
     std::string writeFilepath;
     std::map<std::string, std::string> ref;
+
 public:
-    IO(std::string r, std::string w){
+    IO(std::string r, std::string w)
+    {
         this->readFilepath = r;
         this->writeFilepath = w;
 
@@ -41,7 +46,8 @@ public:
         ref["LSH"] = "001110";
         ref["RSH"] = "001111";
         ref["SWP"] = "010000";
-        ref["XNR"] = "010001";
+        ref["XNOR"] = "010001";
+        ref["LIR"] = "010010";
 
         // reg ref instructions
         ref["CLA"] = "11111101000000000001";
@@ -59,79 +65,72 @@ public:
         ref["HLT"] = "11111110000000000001";
         ref["CLI"] = "11111110000000000010";
 
+        // IO instructions
+        ref["INP"] = "11111111000000000001";
+        ref["OUT"] = "11111111000000000010";
+        ref["SKI"] = "11111111000000000100"; 
+        ref["SKO"] = "11111111000000001000";
+        ref["ION"] = "11111111000000010000";
+        ref["IOF"] = "11111111000000100000";
     }
 
-
-    std::string decodeLine(std::string line){
+    std::string decodeLine(std::string line)
+    {
         std::string instruction = "";
         std::string word = "";
 
-        bool isNum = line[0]>='0' && line[0]<='9' ? 1:0;
-        int last_space = 0;
-        for(int i = 0; i < line.length(); i++){
-            if(line[i] == ' ' || i == line.length()-1){
-                if(line[i] == ' ')
-                    last_space = i;
-
-
-                if(!isNum){
-                    instruction += ref[word];
-
-                    if(
-                        word == "CLA" || word == "CLE" || word == "CMA" || word == "CME" ||
-                        word == "CIR" || word == "CIL" || word == "INC" || word == "DEC" ||
-                        word == "SPA" || word == "SNA" || word == "SZA" || word == "SZE" ||
-                        word == "HLT" || word == "CLV"
-                    ) break;
-
-                    else if(
-                        word == "ADD" || word == "ADD" || word == "LDA" || word == "STA" ||
-                        word == "BUN" || word == "BSA" || word == "ISZ" || word == "SIS" ||
-                        word == "SIG" || word == "SIE" || word == "OR" || word == "XOR" ||
-                        word == "NOT" || word == "SUB" || word == "LSH" || word == "RSH" ||
-                        word == "SWP" || word == "XNR"
-                    ) isNum = 1;
-
-                    word = "";
-                } else {
-                    if(last_space == 0){
-                        word=line;
-                    } else {
-                        for(int j = last_space+1; j < line.length(); j++){
-                            word += line[j];
-                        }
-                    }
-                    if(last_space != 0)
-                        instruction += std::bitset<12>(std::stoi(word)).to_string();
-                    else
-                        instruction += std::bitset<20>(std::stoi(word)).to_string();
-                    break;
-                }
-            } else{
-                word += line[i];
+        stringstream ln(line);
+        while (getline(ln, word, ' '))
+        {
+            if(line[0]>='0' && line[0]<='9'){
+                int num = std::stoi(line);
+                instruction+= std::bitset<20>(num).to_string();
+                break;
             }
+
+            instruction+=ref[word];
+            if(word[0]>='0' && word[0]<='9')
+            {
+                int num = stoi(word);
+                instruction+=bitset<12>(num).to_string();
+                break; 
+            }
+
         }
 
         return instruction;
     }
+    void output(string *mem,unsigned int size)
+    {
+        ofstream Ofile;
+        Ofile.open("output.txt");
 
-    void readToMemory(std::string * mem, unsigned int size){
+        for(int i =0;i<size;i++)
+        {
+            Ofile<<mem[i]<<endl;
+        }
+    }
+    void readToMemory(std::string *mem, unsigned int size)
+    {
         std::fstream in(this->readFilepath);
         int p_mem = 0;
-        while(!in.eof()){
+        while (!in.eof())
+        {
             std::string line;
             std::getline(in, line);
 
-            if(line == "\n" || line == "")
+            if (line == "\n" || line == "")
                 continue;
             mem[p_mem] = this->decodeLine(line);
             std::cout << "line " << p_mem << ": " << mem[p_mem] << std::endl;
 
             p_mem++;
         }
+
+        system("pause");
     }
 
-    ~IO(){
-
+    ~IO()
+    {
     }
 };

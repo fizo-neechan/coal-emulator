@@ -37,8 +37,12 @@ ref["SZE"] = "11111101100000000000";
 ref["HLT"] = "11111110000000000001";
 ref["CLV"] = "11111110000000000010";
 
-word == "ADD" || word == "ADD" || word == "LDA" || word == "STA" || word == "BUN" || word == "BSA" || word == "ISZ" || word == "SIS" || word == "SIG" || word == "SIE" || word == "OR" || word == "XOR" || word == "NOT" || word == "SUB" || word == "LSH" || word == "RSH" || word == "SWP" || word == "XNR"
-
+ref["INP"] = "11111111000000000001";
+ref["OUT"] = "11111111000000000010";
+ref["SKI"] = "11111111000000000100"; 
+ref["SKO"] = "11111111000000001000";
+ref["ION"] = "11111111000000010000";
+ref["IOF"] = "11111111000000100000";
 
 
 LSH 3

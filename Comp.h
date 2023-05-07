@@ -23,6 +23,7 @@ class Comp {
 
         int D;
         int SC;
+        int lastSC;
 
         // memory
         std::string *RAM;
@@ -77,6 +78,14 @@ class Comp {
             }
             
             return out;
+        }
+
+        void output()
+        {
+            string r="";
+            string w="";
+            IO out(r,w);
+            out.output(this->RAM,2048);
         }
 
         void t0(){
@@ -169,6 +178,7 @@ class Comp {
                     case 13:
                     case 16:
                     case 17:
+                    case 18:
                         this->DR = this->RAM[binaryToDecimal(this->AR)];
                         break;
                     case 14:
@@ -286,6 +296,11 @@ class Comp {
                 case 17:
                     this->AC = decimalToBinary(binaryToDecimal(this->AC) ^ binaryToDecimal(this->DR), 20);
                     break;
+                case 18:
+                    this->index = this->DR;
+                    this->SC = 0;
+                    return;
+                    break;
                 default:
                     std::cout << "ERROR UNDEFINED INSTRUCTION T6 :: D=" << this->D << std::endl;
                     break;
@@ -332,7 +347,7 @@ class Comp {
 
         void regRefT3(){
             int b = B(this->IR);
-            if(this->D == 62){
+            if(this->D == 61){
                 switch(b){
                     case 12:
                         this->AC = std::string(20, '0');
@@ -340,7 +355,7 @@ class Comp {
                     case 11:
                         this->E = !this->E;
                         break;
-                    case 10:
+                    case 4:
                         this->E = AC[0] == '1' ? 1:0;
                         this->AC = rsh(this->AC);
                         AC[19] = this->E == 1 ? '1':'0';
@@ -366,8 +381,8 @@ class Comp {
                             this->PC = decimalToBinary(binaryToDecimal(this->PC)+1, 12);
                         }
                         break;
-                    case 4:
-                        if(this->AC == "0000000000000000000"){
+                    case 10:
+                        if(this->AC == decimalToBinary(0,20)){
                             this->PC = decimalToBinary(binaryToDecimal(this->PC)+1, 12);
                         }
                         break;
@@ -385,7 +400,7 @@ class Comp {
                     default:
                         std::cout << "BRO WTF regT3 :: D =" << this->D << " && B = " << b << std::endl;
                 }
-            } else if(this->D == 63){
+            } else if(this->D == 62){
                 switch(b){
                     case 2:
                         this->E = 0;
@@ -438,11 +453,12 @@ class Comp {
             } else {
                 std::cout << "UNDEFINED ioT3 :: D =" << this->D << std::endl;
             }
+            this->SC = 0;
         }
 
         void print(){
             std::cout << std::endl;
-            std::cout << "SC = " << this->SC << std::endl;
+            std::cout << "SC = " << this->lastSC << std::endl;
             std::cout << "IR = " << this->IR <<  std::endl;
             std::cout << "AR = " << binaryToDecimal(this->AR) <<  std::endl;
             std::cout << "PC = " << binaryToDecimal(this->PC) <<  std::endl;
@@ -463,7 +479,7 @@ class Comp {
         int B(std::string binary){
             for(int i = binary.length()-1; i >= 0; i--){
                 if(binary[i] == '1'){
-                    return binary.length() - i + 1;
+                    return (binary.length() - i-1);
                 }
             }
 
@@ -475,11 +491,14 @@ class Comp {
             // hlt fe001
             bool hlt = 0;
             int pc = 0;
-            while(!(this->RAM[binaryToDecimal(this->PC)] == "11111110000000000001" && this->SC==0)){
-                
+            this->I = 0;
+            this->E = 0;
+            while(!(this->RAM[binaryToDecimal(this->PC)] == "11111110000000000001" && this->SC==0 && this->I == 0)){
+                this->lastSC = this->SC;
                 switch (this->SC){
                     case 0:
                         t0();
+                        // sleep('3000')
                         break;
                     case 1:
                         t1();
@@ -488,9 +507,9 @@ class Comp {
                         t2();
                         break;
                     case 3:
-                        if(this->i1 && this->i0 && (this->D == 62 || this->D == 63)){
+                        if(this->i1 && this->i0 && (this->D == 61 || this->D == 62)){
                             regRefT3();
-                        } else if(this->i1 && this->i0 && this->D == 64) {
+                        } else if(this->i1 && this->i0 && this->D == 63) {
                             ioT3();
                         } else {
                             t3();
@@ -513,7 +532,9 @@ class Comp {
                         break;
                 }
 
+                system("cls"); 
                 this->print();
+                system("pause");
             }
         }
         
